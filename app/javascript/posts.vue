@@ -1,44 +1,50 @@
-<template lang='pug'>
-  <div id="app">
-    <p>{{ posts }}</p>
-  </div>
+<template>
+  <v-app id="app">
+    <v-container>
+      <v-data-table
+        :headers="headers"
+        :items="items"
+        :items-per-page="itemsPerPage"
+      />
+    </v-container>
+    <v-pagination v-model="currentPage" :length="totalPages" @input="fetchPosts"></v-pagination>
+  </v-app>
 </template>
 
 <script>
 export default {
-  // components: {
-  //   'post': Post
-  // },
   data: () => {
     return {
-      posts: []
+      headers: [
+          { text: "ID", value: "id"},
+          { text: "Title", value: "title"},
+      ],
+      items: [],
+      currentPage: 1,
+      itemsPerPage: 10,
+      totalPages: null
     }
   },
-  created() {
-    fetch('/api/posts.json', {
-      method: 'GET',
-      headers: { 'X-Requested-With': 'XMLHttpRequest', },
-      credentials: 'same-origin',
-      redirect: 'manual'
-    })
+  methods: {
+    fetchPosts() {
+      fetch(`/api/posts?page=${this.currentPage}`, {
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest'},
+        credentials: 'same-origin',
+        redirect: 'manual'
+      })
         .then(response => {
           return response.json()
         })
-        .then(json => {
-          setTimeout(function(){
-            json.forEach(r => { this.posts.push(r) })
-          }.bind(this), 2000)
-        })
-        .catch(error => {
-          console.warn('Failed to parsing', error)
-        })
-  },
-  computed: {
-    myposts(){
-      setTimeout(function(){
-        return this.posts
-      }.bind(this), 10000)
+        .then(
+          json => {
+          this.items = json.posts;
+          this.totalPages = json.total_pages;
+      })
     }
+  },
+  created(){
+    this.fetchPosts()
   }
 }
 

@@ -5,8 +5,13 @@
 // like app/views/layouts/application.html.erb.
 // All it does is render <div>Hello Vue</div> at the bottom of the page.
 
-import Vue from 'vue'
-import Posts from './posts.vue'
+import Vue from "vue";
+import Vuetify from "vuetify"; // 追加
+import "vuetify/dist/vuetify.min.css"; // 追加
+import Posts from "./posts.vue";
+
+Vue.use(Vuetify); // 追加
+const vuetify = new Vuetify();
 
 document.addEventListener('DOMContentLoaded', () => {
   const selector = '#js-posts'
@@ -14,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (posts) {
     new Vue({
+      vuetify,
       render: h => h(Posts)
     }).$mount(selector)
   }
