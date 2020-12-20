@@ -2,7 +2,7 @@ module Api
   class PostsController < ApplicationController
     def index
       posts = Post.all
-      render json: { status: 'SUCCESS', message: 'Loaded posts', data: posts }
+      render json: posts
     end
   end
 end
